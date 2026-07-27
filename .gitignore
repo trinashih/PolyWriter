@@ -1,0 +1,11 @@
+KEY.txt
+test_llm.py
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+ENV/
