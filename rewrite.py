@@ -35,6 +35,13 @@ If the user includes those instructions, follow them.
 If the user asks for translation, translate the message to the requested language.
 If the user asks for rewriting only, rewrite it.
 If the user input already contains both the message and the instruction together, interpret it naturally.
+
+Emoji handling:
+- Preserve emojis that are already in the user's message when they fit naturally.
+- Do not remove emojis unless they make the message unclear.
+- Do not add emojis by default.
+- If the user asks for emoji, you may add a small number of natural, professional emojis.
+- Keep emoji use light and suitable for engineering or customer communication.
 """
 
 
@@ -53,6 +60,9 @@ Requirements:
 - Keep it concise.
 - If the user includes extra instructions such as tone, formality, brevity, politeness, or translation, follow them.
 - The user may put those instructions in parentheses or inline in the message.
+- Preserve emojis that are already present if they fit naturally.
+- Do not add emojis unless the user asks for them.
+- If the user asks for emoji, use only a small number and keep them natural and professional.
 
 User input:
 {user_text}
@@ -90,7 +100,18 @@ def rewrite_text(client: OpenAI, user_text: str, model: str = DEFAULT_MODEL) -> 
             {"role": "user", "content": build_user_prompt(user_text)},
         ],
     )
-    return response.choices[0].message.content.strip()
+    content = response.choices[0].message.content or ""
+    return normalize_output_text(content)
+
+
+def normalize_output_text(text: str) -> str:
+    normalized = text.replace("\r\n", "\n").replace("\r", "\n").strip()
+
+    normalized = re.sub(r"\n{3,}", "\n\n", normalized)
+    normalized = re.sub(r"([^\n])\n([\U00010000-\U0010ffff])", r"\1 \2", normalized)
+    normalized = re.sub(r"([\U00010000-\U0010ffff])\n([^\n])", r"\1 \2", normalized)
+
+    return normalized
 
 
 def format_rewrite_error(error: Exception) -> str:

@@ -28,6 +28,8 @@ It can:
 - rewrite English text
 - adjust tone based on your instructions
 - translate when you ask for it
+- preserve emoji naturally
+- add light emoji when you explicitly ask for it
 - accept multi-line input
 - keep running until you exit
 
@@ -149,6 +151,24 @@ Rewrite this and make it shorter: Thanks for your help, we may need to postpone 
 ```
 
 
+### Rewrite with emoji
+
+Input:
+
+```text
+Please rewrite with emoji: thanks for your help, we finished the validation today
+```
+
+
+### Preserve existing emoji
+
+Input:
+
+```text
+thanks for the update 🙂 we may need to move the onsite plan to next week
+```
+
+
 ## Notes
 
 - The tool is intended for engineering and customer communication.
@@ -156,6 +176,9 @@ Rewrite this and make it shorter: Thanks for your help, we may need to postpone 
 - It is not intended for legal writing.
 - It is not intended for executive-style writing.
 - Technical terms, names, ticket numbers, project names, dates, and acronyms should be preserved.
+- Emoji are preserved when they fit naturally.
+- Emoji are not added by default unless you ask for them.
+- When requested, emoji use should stay light and professional.
 
 
 ## Current Files
