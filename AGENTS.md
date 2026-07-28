@@ -97,6 +97,14 @@ The script should:
 - Send the text to AMD LLM Gateway.
 - Print the rewritten result.
 - Keep running until the user exits, if simple to implement.
+- Support a quick one-shot mode with `-m` or `-message` followed by the input text.
+- In quick one-shot mode, print the LLM result once and exit.
+- Support `-t` or `-temperature` followed by a value from `0` to `5`.
+- Treat `-t` / `-temperature` as a formality level, not a model sampling temperature.
+- Use `3` as the default formality level for normal engineering communication.
+- Treat `0` as the most casual option.
+- Treat `5` as the most formal option.
+- If `-t` is provided without `-m`, keep the normal interactive loop and apply the selected formality level to rewrite or translation output.
 
 Version 2 can be a simple local GUI using tkinter.
 
@@ -156,6 +164,10 @@ Requirements:
 - Do not add new facts.
 - Do not make it sound like marketing, legal, or executive writing.
 - Keep it concise.
+- Preserve emojis that are already present when they fit naturally.
+- Do not add emojis unless the user asks for them.
+- If the user asks for emoji, use only a small number and keep them natural and professional.
+- Apply the selected formality level from `0` to `5` to the rewrite or translation style.
 
 Original message:
 {user_text}
@@ -178,6 +190,22 @@ Do not make the message sound like marketing, legal, or executive writing.
 Do not add facts that are not in the original message.
 Preserve technical terms, names, ticket numbers, project names, dates, and acronyms.
 Keep the rewritten message close to the original meaning and urgency.
+
+Emoji handling:
+- Preserve emojis that are already in the user's message when they fit naturally.
+- Do not remove emojis unless they make the message unclear.
+- Do not add emojis by default.
+- If the user asks for emoji, you may add a small number of natural, professional emojis.
+- Keep emoji use light and suitable for engineering or customer communication.
+
+Formality handling:
+- `0` = very casual
+- `1` = casual
+- `2` = slightly casual but still professional
+- `3` = balanced professional tone for normal engineering communication
+- `4` = more polished and formal
+- `5` = very formal and polished
+- The selected level should affect both rewrite and translation output.
 
 Coding Style:
 Use simple Python.
@@ -218,6 +246,18 @@ $env:LLM_GATEWAY_KEY="your-api-key"
 The script should show a clear error if LLM_GATEWAY_KEY is missing.
 
 Expected Behavior:
+
+Quick mode command:
+python rewrite.py -m "BTW, is the FR will ship out today?"
+
+Output:
+BTW, will the FR ship out today?
+
+Quick mode command with higher formality:
+python rewrite.py -m "please help check this issue" -t 5
+
+Interactive mode command with custom formality:
+python rewrite.py -t 1
 
 Input:
 BTW, is the FR will ship out today?

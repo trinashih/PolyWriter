@@ -30,6 +30,8 @@ It can:
 - translate when you ask for it
 - preserve emoji naturally
 - add light emoji when you explicitly ask for it
+- run once from the command line with `-m` or `-message`
+- adjust rewrite formality with `-t` or `-temperature`
 - accept multi-line input
 - keep running until you exit
 
@@ -71,6 +73,33 @@ From the project folder, run:
 python rewrite.py
 ```
 
+To see command-line help:
+
+```bash
+python rewrite.py -h
+```
+
+Quick one-shot mode:
+
+```bash
+python rewrite.py -m "BTW, is the FR will ship out today?"
+```
+
+With formality level:
+
+```bash
+python rewrite.py -m "please help check this issue" -t 5
+```
+
+Formality level range:
+
+- `0` = most casual
+- `3` = default / normal engineering communication
+- `5` = most formal
+
+If you do not provide `-m` or `-message`, the script keeps the current interactive loop behavior.
+If you provide `-t` without `-m`, the selected formality level still applies to the interactive rewrite results.
+
 
 ## How Input Works
 
@@ -103,6 +132,33 @@ Possible output:
 
 ```text
 BTW, will the FR ship out today?
+```
+
+
+### Quick one-shot rewrite
+
+Command:
+
+```bash
+python rewrite.py -m "No.. I dont think we need to be on site today~ do you hear any upates from Shawn?"
+```
+
+
+### Quick one-shot rewrite with higher formality
+
+Command:
+
+```bash
+python rewrite.py -m "please help check this issue" -t 5
+```
+
+
+### Interactive mode with custom formality
+
+Command:
+
+```bash
+python rewrite.py -t 1
 ```
 
 
@@ -179,6 +235,8 @@ thanks for the update 🙂 we may need to move the onsite plan to next week
 - Emoji are preserved when they fit naturally.
 - Emoji are not added by default unless you ask for them.
 - When requested, emoji use should stay light and professional.
+- `-t` and `-temperature` are treated as a formality level from 0 to 5.
+- If `-m` or `-message` is provided, the script prints one result and exits.
 
 
 ## Current Files
