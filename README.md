@@ -117,6 +117,12 @@ Waiting for LLM response...
 
 while it is waiting for the AMD LLM Gateway reply.
 
+After the response is ready in interactive mode, the script prints:
+
+```text
+Result:
+```
+
 
 ## Example Usage
 
@@ -251,4 +257,3 @@ thanks for the update 🙂 we may need to move the onsite plan to next week
 Possible next steps if needed:
 - a simple local GUI with `tkinter`
 - copy-to-clipboard support
-- clearer output labels such as `Result:` instead of `Rewritten message:`

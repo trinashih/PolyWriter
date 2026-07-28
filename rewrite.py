@@ -273,7 +273,7 @@ def main() -> None:
             print(f"{format_rewrite_error(error)}\n")
             continue
 
-        print("\nRewritten message:")
+        print("\nResult:")
         print(rewritten)
         print()
 
