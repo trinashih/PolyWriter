@@ -287,4 +287,3 @@ thanks for the update 🙂 we may need to move the onsite plan to next week
 
 Possible next steps if needed:
 - a simple local GUI with `tkinter`
-- copy-to-clipboard support
