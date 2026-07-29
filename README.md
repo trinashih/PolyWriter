@@ -136,16 +136,16 @@ Blank lines are preserved, so you can paste email-style content with paragraph s
 Example:
 
 ```text
-Hi Atif
+Hi Pikachu
 
 We will be on site to perform the CPU replacement on both compute node next Monday morning 10:30AM
 
-Alex Chen
-Steven Su
-Trina Shih
+Charizard
+Bulbasaur
+Eevee
 
 Thank you
-Trina
+Eevee
 //
 ```
 
