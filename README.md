@@ -106,8 +106,30 @@ If you provide `-t` without `-m`, the selected formality level still applies to 
 When the script starts:
 
 1. Paste your text
-2. Press **Enter on an empty line** to submit
+2. Type `//` or `/.` on a new line to submit
 3. Type `/exit` on a new line to quit
+
+Blank lines are preserved, so you can paste email-style content with paragraph spacing and signatures.
+
+`/send` and `/done` still work too, but `//` and `/.` are the shorter interactive shortcuts.
+
+Example:
+
+```text
+Hi Atif
+
+We will be on site to perform the CPU replacement on both compute node next Monday morning 10:30AM
+
+Alex Chen
+Steven Su
+Trina Shih
+
+Thank you
+Trina
+//
+```
+
+`-m` / `-message` one-shot mode is unchanged. It still sends the provided text immediately and does not require `/send` or `/done`.
 
 The script will show:
 

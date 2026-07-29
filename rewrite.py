@@ -153,16 +153,22 @@ def format_rewrite_error(error: Exception) -> str:
 
 def read_multiline_input() -> str:
     print("Paste your text below.")
-    print("Press Enter on an empty line to submit.")
+    print("Type // or /. on a new line to submit.")
     print("Type /exit on a new line to quit.")
+    print("/send and /done also work.")
+    print("Blank lines will be kept in your message.")
 
     lines = []
     while True:
         line = input()
-        if not lines and line.strip() == "/exit":
+        command = line.strip()
+
+        if not lines and command == "/exit":
             return "/exit"
-        if line == "":
+
+        if command in {"//", "/.", "/send", "/done"}:
             break
+
         lines.append(line)
 
     return "\n".join(lines).strip()
