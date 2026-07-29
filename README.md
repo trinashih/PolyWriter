@@ -22,7 +22,7 @@ The output style is intended to be:
 
 This version is a simple command-line script:
 
-- `rewrite.py`
+- `polywriter.py`
 
 It can:
 - rewrite English text
@@ -30,6 +30,7 @@ It can:
 - translate when you ask for it
 - preserve emoji naturally
 - add light emoji when you explicitly ask for it
+- automatically copy the result to the clipboard
 - run once from the command line with `-m` or `-message`
 - adjust rewrite formality with `-t` or `-temperature`
 - accept multi-line input
@@ -70,25 +71,31 @@ Only the value inside the double quotes is used.
 From the project folder, run:
 
 ```bash
-python rewrite.py
+python polywriter.py
 ```
 
 To see command-line help:
 
 ```bash
-python rewrite.py -h
+python polywriter.py -h
+```
+
+To see the current version:
+
+```bash
+python polywriter.py --version
 ```
 
 Quick one-shot mode:
 
 ```bash
-python rewrite.py -m "BTW, is the FR will ship out today?"
+python polywriter.py -m "BTW, is the FR will ship out today?"
 ```
 
 With formality level:
 
 ```bash
-python rewrite.py -m "please help check this issue" -t 5
+python polywriter.py -m "please help check this issue" -t 5
 ```
 
 Formality level range:
@@ -99,6 +106,7 @@ Formality level range:
 
 If you do not provide `-m` or `-message`, the script keeps the current interactive loop behavior.
 If you provide `-t` without `-m`, the selected formality level still applies to the interactive rewrite results.
+When the program starts, it also shows the current application version at the top.
 
 
 ## How Input Works
@@ -110,8 +118,6 @@ When the script starts:
 3. Type `/exit` on a new line to quit
 
 Blank lines are preserved, so you can paste email-style content with paragraph spacing and signatures.
-
-`/send` and `/done` still work too, but `//` and `/.` are the shorter interactive shortcuts.
 
 Example:
 
@@ -129,7 +135,7 @@ Trina
 //
 ```
 
-`-m` / `-message` one-shot mode is unchanged. It still sends the provided text immediately and does not require `/send` or `/done`.
+`-m` / `-message` one-shot mode is unchanged. It still sends the provided text immediately and does not require `//` or `/.`.
 
 The script will show:
 
@@ -144,6 +150,8 @@ After the response is ready in interactive mode, the script prints:
 ```text
 Result:
 ```
+
+After each successful rewrite, the tool tries to copy the result to your clipboard automatically and shows whether it succeeded.
 
 
 ## Example Usage
@@ -168,7 +176,7 @@ BTW, will the FR ship out today?
 Command:
 
 ```bash
-python rewrite.py -m "No.. I dont think we need to be on site today~ do you hear any upates from Shawn?"
+python polywriter.py -m "No.. I dont think we need to be on site today~ do you hear any upates from Shawn?"
 ```
 
 
@@ -177,7 +185,7 @@ python rewrite.py -m "No.. I dont think we need to be on site today~ do you hear
 Command:
 
 ```bash
-python rewrite.py -m "please help check this issue" -t 5
+python polywriter.py -m "please help check this issue" -t 5
 ```
 
 
@@ -186,7 +194,7 @@ python rewrite.py -m "please help check this issue" -t 5
 Command:
 
 ```bash
-python rewrite.py -t 1
+python polywriter.py -t 1
 ```
 
 
@@ -265,11 +273,12 @@ thanks for the update 🙂 we may need to move the onsite plan to next week
 - When requested, emoji use should stay light and professional.
 - `-t` and `-temperature` are treated as a formality level from 0 to 5.
 - If `-m` or `-message` is provided, the script prints one result and exits.
+- After each successful rewrite, the tool tries to copy the result to the clipboard and prints a status message.
 
 
 ## Current Files
 
-- `rewrite.py` - command-line rewriting and translation tool
+- `polywriter.py` - command-line rewriting and translation tool
 - `KEY.txt` - local API key file
 - `README.md` - project usage guide
 
