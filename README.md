@@ -28,6 +28,7 @@ It can:
 - rewrite English text
 - adjust tone based on your instructions
 - translate when you ask for it
+- target a specific output language with `-l` or `--language`
 - preserve emoji naturally
 - add light emoji when you explicitly ask for it
 - automatically copy the result to the clipboard
@@ -98,11 +99,24 @@ With formality level:
 python polywriter.py -m "please help check this issue" -t 5
 ```
 
+With target output language:
+
+```bash
+python polywriter.py -m "please help check this issue" -l Japanese
+```
+
 Formality level range:
 
 - `0` = most casual
 - `3` = default / normal engineering communication
 - `5` = most formal
+
+Output language:
+
+- default = `English`
+- use `-l` or `--language` to request another output language
+- examples: `Japanese`, `日本語`, `JP`, `JA`, `Chinese`, `Chinse`, `繁中`, `英文`
+- if the requested language is unsupported, the tool returns an English unsupported-language message
 
 If you do not provide `-m` or `-message`, the script keeps the current interactive loop behavior.
 If you provide `-t` without `-m`, the selected formality level still applies to the interactive rewrite results.
@@ -195,6 +209,24 @@ Command:
 
 ```bash
 python polywriter.py -t 1
+```
+
+
+### Quick one-shot rewrite in Japanese
+
+Command:
+
+```bash
+python polywriter.py -m "please help check this issue" -l Japanese
+```
+
+
+### Quick one-shot rewrite in Traditional Chinese
+
+Command:
+
+```bash
+python polywriter.py -m "please help check this issue" -l Chinese
 ```
 
 

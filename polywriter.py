@@ -13,6 +13,7 @@ KEY_FILE = "KEY.txt"
 DEFAULT_FORMALITY_LEVEL = 3
 APP_NAME = "PolyWriter"
 APP_VERSION = "0.1.0"
+DEFAULT_OUTPUT_LANGUAGE = "English"
 
 SYSTEM_PROMPT = """You are a professional engineering communication assistant.
 
@@ -42,6 +43,8 @@ If the user includes those instructions, follow them.
 If the user asks for translation, translate the message to the requested language.
 If the user asks for rewriting only, rewrite it.
 If the user input already contains both the message and the instruction together, interpret it naturally.
+If a target output language is provided by the application, produce the final output in that language.
+If the requested language is unsupported or unclear, reply in English that the requested language is not supported.
 
 Emoji handling:
 - Preserve emojis that are already in the user's message when they fit naturally.
@@ -66,7 +69,44 @@ def get_formality_instruction(level: int) -> str:
     return "Use a very formal and polished professional tone suitable for sensitive customer-facing communication."
 
 
-def build_user_prompt(user_text: str, formality_level: int = DEFAULT_FORMALITY_LEVEL) -> str:
+def normalize_output_language(language: str | None) -> str:
+    if not language:
+        return DEFAULT_OUTPUT_LANGUAGE
+
+    normalized = language.strip()
+    if not normalized:
+        return DEFAULT_OUTPUT_LANGUAGE
+
+    lowered = normalized.lower()
+    if lowered in {"english", "eng", "en", "英文", "英語"}:
+        return "English"
+
+    if lowered in {"japanese", "jp", "ja", "日本語", "日文", "日語"}:
+        return "Japanese"
+
+    if lowered in {
+        "chinese",
+        "chinse",
+        "中文",
+        "繁中",
+        "繁體中文",
+        "正體中文",
+        "zh",
+        "zh-tw",
+        "zh_tw",
+        "traditional chinese",
+        "traditional chinese mandarin",
+    }:
+        return "Traditional Chinese"
+
+    return normalized
+
+
+def build_user_prompt(
+    user_text: str,
+    formality_level: int = DEFAULT_FORMALITY_LEVEL,
+    output_language: str = DEFAULT_OUTPUT_LANGUAGE,
+) -> str:
     return f"""Rewrite the following message.
 
 Requirements:
@@ -86,6 +126,9 @@ Requirements:
 - If the user asks for emoji, use only a small number and keep them natural and professional.
 - Formality level: {formality_level} out of 5.
 - {get_formality_instruction(formality_level)}
+- Output language: {output_language}.
+- If the output language is Chinese or the user simply asks for Chinese, use Traditional Chinese.
+- If the requested output language is unsupported, reply in English: Unsupported language requested.
 
 User input:
 {user_text}
@@ -121,6 +164,7 @@ def rewrite_text(
     user_text: str,
     model: str = DEFAULT_MODEL,
     formality_level: int = DEFAULT_FORMALITY_LEVEL,
+    output_language: str = DEFAULT_OUTPUT_LANGUAGE,
 ) -> str:
     response = client.chat.completions.create(
         model=model,
@@ -128,7 +172,11 @@ def rewrite_text(
             {"role": "system", "content": SYSTEM_PROMPT},
             {
                 "role": "user",
-                "content": build_user_prompt(user_text, formality_level=formality_level),
+                "content": build_user_prompt(
+                    user_text,
+                    formality_level=formality_level,
+                    output_language=output_language,
+                ),
             },
         ],
     )
@@ -236,9 +284,10 @@ def parse_args() -> argparse.Namespace:
             "Use -m for one-shot mode, or run without -m for interactive mode."
         ),
         epilog=(
-            "Examples: python rewrite.py -m \"please help check this issue\" | "
-            "python rewrite.py -m \"please help check this issue\" -t 5 | "
-            "python rewrite.py -t 1"
+            "Examples: python polywriter.py -m \"please help check this issue\" | "
+            "python polywriter.py -m \"please help check this issue\" -t 5 | "
+            "python polywriter.py -t 1 | "
+            "python polywriter.py -m \"please help check this issue\" -l Japanese"
         ),
     )
     parser.add_argument(
@@ -256,6 +305,16 @@ def parse_args() -> argparse.Namespace:
         help="Formality level from 0 to 5. 0 is most casual, 3 is default, 5 is most formal.",
     )
     parser.add_argument(
+        "-l",
+        "--language",
+        dest="output_language",
+        default=DEFAULT_OUTPUT_LANGUAGE,
+        help=(
+            "Target output language. Default is English. "
+            "Examples: Japanese, 日本語, Chinese. Chinese defaults to Traditional Chinese."
+        ),
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"{APP_NAME} {APP_VERSION}",
@@ -263,6 +322,7 @@ def parse_args() -> argparse.Namespace:
     )
 
     args = parser.parse_args()
+    args.output_language = normalize_output_language(args.output_language)
 
     if not 0 <= args.formality_level <= 5:
         parser.error("-t / -temperature must be an integer from 0 to 5.")
@@ -289,6 +349,7 @@ def main() -> None:
     print(f"{APP_NAME} {APP_VERSION}")
     print("Enter text to rewrite or translate.\n")
     print("Using API key from KEY.txt.\n")
+    print(f"Output language: {args.output_language}\n")
 
     if args.message:
         try:
@@ -296,6 +357,7 @@ def main() -> None:
                 client,
                 args.message,
                 formality_level=args.formality_level,
+                output_language=args.output_language,
             )
         except KeyboardInterrupt:
             print_exit_message()
@@ -331,6 +393,7 @@ def main() -> None:
                 client,
                 user_text,
                 formality_level=args.formality_level,
+                output_language=args.output_language,
             )
         except KeyboardInterrupt:
             print_exit_message()
